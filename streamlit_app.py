@@ -1,16 +1,22 @@
 import streamlit as st
-from snowflake.snowpark.functions import col
 
-
-def main() -> None:
-    session = st.connection('snowflake').session()
-    st.title('Zena\'s Amazing Athleisure Catalog')
-    catalog_df = session.table('zenas_atheleisure_db.products.catalog_for_website')
-    color_or_style_chosen = st.multiselect(
-        label='Pick a sweatsuit color or style',
-        options=catalog_df.select(col('color_or_style')),
+st.title('Zena\'s Amazing Athleisure Catalog')
+session = st.connection('snowflake').session()
+catalog_df = session.table('zenas_athleisure_db.products.catalog_for_website').to_pandas()
+color_or_style_chosen = st.selectbox(
+    label='Pick a sweatsuit color or style',
+    options=catalog_df.index,
+    index=None,
+    placeholder="Select color or style...",
+    format_func=lambda i: catalog_df.at[i, 'COLOR_OR_STYLE'],
+    accept_new_options=False,
+)
+if color_or_style_chosen is not None:
+    row = catalog_df.iloc[color_or_style_chosen]
+    st.image(
+        image=row['FILE_URL'],
+        caption=f"Our warm, comfortable, {row['COLOR_OR_STYLE']} sweatsuit!",
     )
-
-
-if __name__ == '__main__':
-    main()
+    st.write('Price: ', row['PRICE'])
+    st.write('Sizes Available: ', row['SIZE_LIST'])
+    st.write(row['UPSELL_PRODUCT_DESC'])
