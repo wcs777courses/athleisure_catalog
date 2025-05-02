@@ -16,7 +16,8 @@ if color_or_style_chosen is not None:
     st.image(
         image=row['FILE_URL'],
         caption=f"Our warm, comfortable, {row['COLOR_OR_STYLE']} sweatsuit!",
+        width=400,
     )
-    st.write('Price: ', row['PRICE'])
-    st.write('Sizes Available: ', row['SIZE_LIST'])
-    st.write(row['UPSELL_PRODUCT_DESC'])
+    st.markdown(f"**Price:** ${row['PRICE']:.2f}")
+    st.markdown(f"**Sizes Available:** {row['SIZE_LIST']}")
+    st.markdown(f"**Also Consider:** {row['UPSELL_PRODUCT_DESC']}")
